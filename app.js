@@ -102,6 +102,22 @@ if (formIncidencia) {
     });
   });
 }
+
+const btnPurgar = document.getElementById('btn-purgar');
+
+if (btnPurgar) {
+  btnPurgar.addEventListener('click', () => {
+    obtenerTodosLosRegistros()
+      .then((registros) => {
+        const sincronizados = registros.filter((item) => item.estado === 'sincronizado');
+        return Promise.all(sincronizados.map((item) => eliminarRegistro(item.id)));
+      })
+      .then(() => renderizarColaOutbox())
+      .catch((error) => {
+        console.error('[Outbox] Error al purgar registros sincronizados:', error);
+      });
+  });
+}
   sincronizarPendientes();
 });
 
