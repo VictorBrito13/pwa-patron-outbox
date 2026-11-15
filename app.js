@@ -90,3 +90,16 @@ window.addEventListener('online', () => {
 });
 
 window.addEventListener('offline', actualizarIndicadorRed);
+
+function actualizarIndicadorRed() {
+  const badge = document.getElementById('badge-red');
+  if (!badge) return;
+
+  const enLinea = navigator.onLine;
+
+  badge.textContent = enLinea ? 'En Línea' : 'Sin Conexión';
+  badge.classList.toggle('online', enLinea);
+  badge.classList.toggle('offline', !enLinea);
+}
+
+actualizarIndicadorRed();
