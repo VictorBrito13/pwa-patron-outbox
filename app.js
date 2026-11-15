@@ -42,7 +42,7 @@ function procesarEnvioReporte(datosFormulario) {
     });
   })
   .then(() => {
-    return renderizarColaOutlook();
+    return renderizarColaOutbox();
   })
 }
 
@@ -85,11 +85,63 @@ function sincronizarPendientes(){
 
 // Escuchar el regreso de la conectividad
 window.addEventListener('online', () => {
-  actualizarIndicadorRed();
+actualizarIndicadorRed();
+renderizarColaOutbox();
+
+const formIncidencia = document.getElementById('form-incidencia');
+
+if (formIncidencia) {
+  formIncidencia.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const titulo = document.getElementById('titulo').value.trim();
+    const descripcion = document.getElementById('descripcion').value.trim();
+
+    procesarEnvioReporte({ titulo, descripcion }).then(() => {
+      formIncidencia.reset();
+    });
+  });
+}
   sincronizarPendientes();
 });
 
 window.addEventListener('offline', actualizarIndicadorRed);
+
+function renderizarColaOutbox() {
+  return obtenerTodosLosRegistros()
+    .then((registros) => {
+      const lista = document.getElementById('lista-outbox');
+      if (!lista) return;
+
+      lista.innerHTML = '';
+
+      registros.forEach((registro) => {
+        const item = document.createElement('li');
+        item.classList.add('item-outbox', registro.estado);
+
+        const titulo = document.createElement('span');
+        titulo.className = 'titulo';
+        titulo.textContent = registro.titulo || 'Sin título';
+
+        const estado = document.createElement('span');
+        estado.className = `estado ${registro.estado}`;
+        estado.textContent = registro.estado === 'pendiente' ? 'Pendiente' : 'Sincronizado';
+
+        const hora = document.createElement('span');
+        hora.className = 'hora';
+        const fecha = new Date(registro.fechaCreacion);
+        hora.textContent = Number.isNaN(fecha.getTime())
+          ? '--:--'
+          : fecha.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+
+        item.append(titulo, estado, hora);
+        lista.appendChild(item);
+      });
+    })
+    .catch((error) => {
+      console.error('[Outbox] Error al renderizar la cola:', error);
+    });
+}
 
 function actualizarIndicadorRed() {
   const badge = document.getElementById('badge-red');
