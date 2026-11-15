@@ -85,8 +85,12 @@ function sincronizarPendientes(){
 
 // Escuchar el regreso de la conectividad
 window.addEventListener('online', () => {
-actualizarIndicadorRed();
-renderizarColaOutbox();
+  actualizarIndicadorRed();
+  renderizarColaOutbox();
+  sincronizarPendientes();
+});
+
+window.addEventListener('offline', actualizarIndicadorRed);
 
 const formIncidencia = document.getElementById('form-incidencia');
 
@@ -118,10 +122,6 @@ if (btnPurgar) {
       });
   });
 }
-  sincronizarPendientes();
-});
-
-window.addEventListener('offline', actualizarIndicadorRed);
 
 function renderizarColaOutbox() {
   return obtenerTodosLosRegistros()
@@ -171,3 +171,4 @@ function actualizarIndicadorRed() {
 }
 
 actualizarIndicadorRed();
+renderizarColaOutbox();

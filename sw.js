@@ -1,4 +1,4 @@
-const CACHE_NAME = 'app-v5';
+const CACHE_NAME = 'app-v6';
 
 self.addEventListener('install', (event) => {
   console.log("SW instalado 000");
@@ -6,9 +6,14 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME).then(cache => {
       cache.addAll([
         './',
-        '/index.html',
-        '/style.css',
-        '/app.js',
+        './index.html',
+        './styles.css',
+        './app.js',
+        './db-helper.js',
+        './manifest.json',
+        './icons/icon-192.png',
+        './icons/icon-512.png',
+        './icons/icon-maskable-512.png',
         './pages/caches.html'
       ]);
     })
